@@ -9,15 +9,7 @@ Head SHA: {{actionDetails.head_sha}}
     {{#forEach this.commits}}
     - **{{this.sha}}** {{this.commit.message}}
     {{/forEach}}
-### Comments
-    {{#forEach this.comment}}
-    - **{{this.id}}** 
-    {{/forEach}}
 
-### linkedIssues
-    {{#forEach this.linkedIssues}}
-    - **{{this.id}}** 
-    {{/forEach}}
 
 {{/forEach}}
 
