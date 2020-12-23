@@ -149,17 +149,16 @@ async function GetPullRequest(
           repo,
           pr
         )
-        core.info(`00`)
-        /*
+
         response.data.linkedIssues = await GetLinkedIssues(
           octokit,
           owner,
           repo,
           pr
         )
-        */
 
         pullRequests.push(response.data)
+
       }
 
       resolve(pullRequests)
