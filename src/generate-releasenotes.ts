@@ -111,7 +111,7 @@ async function GetRunDetails(
         core.info(`No associated PRs with run`)
       }
 
-      response(actionDetails)
+      resolve(actionDetails)
     } catch (error) {
       core.setFailed(error.message)
     }
@@ -156,15 +156,8 @@ async function GetPullRequest(
           repo,
           pr
         )
-        core.info('0')
-        core.info(JSON.stringify(response))
-        core.info('1')
-        core.info(JSON.stringify(response.data))
         pullRequests.push(response.data)
-        core.info('2')
-
       }
-      core.info(JSON.stringify(pullRequests))
 
       resolve(pullRequests)
     } catch (err) {
