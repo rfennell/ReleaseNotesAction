@@ -2,13 +2,13 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import * as fs from 'fs'
 
-export async function run(): Promise<void> {
+export async function run(overrideOwner?: string, overrideRepo?: string ): Promise<void> {
   try {
     // Get authenticated GitHub client (Ocktokit): https://github.com/actions/toolkit/tree/master/packages/github#usage
     // Pass in the GITHUB_TOKEN in the same style as used by https://github.com/actions/create-release
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN || ''
     const octokit = github.getOctokit(GITHUB_TOKEN)
-
+ 
     // get the context
     const context = (github as any).context
 
@@ -19,22 +19,27 @@ export async function run(): Promise<void> {
     const templateFile = core.getInput('templateFile')
     const outputFile = core.getInput('outputFile')
 
-    core.info(__dirname)
-
     core.info(
       `Getting the details of the workflow run ${GITHUB_RUN_ID} from repo ${repository.owner.login}/${repository.name}`
     )
     core.info(`Template File: ${templateFile}`)
     core.info(`Output File: ${outputFile}`)
 
+    // overrrides to allow local testing
+    const overrideRepo = repository.name
+    const overrideOwner = repository.owner.login
+
+    core.info(`Owner: ${overrideOwner}`)
+    core.info(`Repo: ${overrideRepo}`)
+
     if (fs.existsSync(templateFile)) {
       const actionDetails = await GetRunDetails(
         octokit,
-        repository.owner.login,
-        repository.name,
+        overrideOwner,
+        overrideRepo,
         GITHUB_RUN_ID
       )
-
+      
       core.debug(`---THE API OBJECT START---`)
       core.debug(JSON.stringify(actionDetails))
       core.debug(`---THE API OBJECT END---`)
@@ -48,6 +53,7 @@ export async function run(): Promise<void> {
       core.debug(`---THE OUTPUT OBJECT END---`)
 
       fs.writeFileSync(outputFile, output)
+
     } else {
       core.setFailed(`Cannot find template file ${templateFile}`)
     }
@@ -64,7 +70,12 @@ function ProcessTemplate(template: string, actionDetails: any): string {
     const handlebars = require('handlebars')
 
     core.info('0')
-    require('handlebars-helpers')()
+    "use strict";
+    const helpers = require("handlebars-helpers")({
+      handlebars: handlebars
+    });
+
+    "use strict";
 
     core.info('1')
     // add a custom helper to expand json
@@ -77,7 +88,7 @@ function ProcessTemplate(template: string, actionDetails: any): string {
 
     core.info('3')
     output = handlebarsTemplate({
-      actionDetails: actionDetails
+      'actionDetails': actionDetails
     })
 
     core.info('Completed processing template')

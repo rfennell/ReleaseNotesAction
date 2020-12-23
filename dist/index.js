@@ -40,7 +40,7 @@ exports.run = void 0;
 const core = __importStar(__webpack_require__(2186));
 const github = __importStar(__webpack_require__(5438));
 const fs = __importStar(__webpack_require__(5747));
-function run() {
+function run(overrideOwner, overrideRepo) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Get authenticated GitHub client (Ocktokit): https://github.com/actions/toolkit/tree/master/packages/github#usage
@@ -54,12 +54,16 @@ function run() {
             const GITHUB_RUN_ID = parseInt(process.env.GITHUB_RUN_ID || '-1');
             const templateFile = core.getInput('templateFile');
             const outputFile = core.getInput('outputFile');
-            core.info(__dirname);
             core.info(`Getting the details of the workflow run ${GITHUB_RUN_ID} from repo ${repository.owner.login}/${repository.name}`);
             core.info(`Template File: ${templateFile}`);
             core.info(`Output File: ${outputFile}`);
+            // overrrides to allow local testing
+            const overrideRepo = repository.name;
+            const overrideOwner = repository.owner.login;
+            core.info(`Owner: ${overrideOwner}`);
+            core.info(`Repo: ${overrideRepo}`);
             if (fs.existsSync(templateFile)) {
-                const actionDetails = yield GetRunDetails(octokit, repository.owner.login, repository.name, GITHUB_RUN_ID);
+                const actionDetails = yield GetRunDetails(octokit, overrideOwner, overrideRepo, GITHUB_RUN_ID);
                 core.debug(`---THE API OBJECT START---`);
                 core.debug(JSON.stringify(actionDetails));
                 core.debug(`---THE API OBJECT END---`);
@@ -86,7 +90,11 @@ function ProcessTemplate(template, actionDetails) {
         core.info('Processing template');
         const handlebars = __webpack_require__(7492);
         core.info('0');
-        __webpack_require__(9497)();
+        "use strict";
+        const helpers = __webpack_require__(9497)({
+            handlebars: handlebars
+        });
+        "use strict";
         core.info('1');
         // add a custom helper to expand json
         handlebars.registerHelper('json', function (context) {
