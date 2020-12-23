@@ -146,12 +146,15 @@ async function GetPullRequest(
           repo,
           pr
         )
+
+        /*
         response.data.linkedIssues = await GetLinkedIssues(
           octokit,
           owner,
           repo,
           pr
         )
+        */
 
         pullRequests.push(response.data)
       }
@@ -214,7 +217,6 @@ async function GetLinkedIssues(
   pr: any
 ): Promise<any[]> {
   return new Promise<any[]>(async (resolve, reject) => {
-    const linkedIssues = []
     try {
       core.info(`Getting issues linked to PR ${pr.number}`)
 
@@ -247,6 +249,7 @@ async function GetLinkedIssues(
       }}`
       )
 
+      const linkedIssues = []
 
       const issues: {[key: string]: number} = {}
       if (response.resource && response.resource.timelineItems) {
@@ -271,10 +274,9 @@ async function GetLinkedIssues(
         }
       }
 
+      resolve(linkedIssues)
     } catch (err) {
-      core.warning(err)
+      reject(err)
     }
-    resolve(linkedIssues)
-
   })
 }
