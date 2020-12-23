@@ -143,6 +143,7 @@ function GetPullRequest(octokit, owner, repo, prList) {
                     // add the details of the commits
                     response.data.commits = yield GetPullRequestCommits(octokit, owner, repo, pr);
                     response.data.comments = yield GetPullRequestComments(octokit, owner, repo, pr);
+                    core.info(`00`);
                     /*
                     response.data.linkedIssues = await GetLinkedIssues(
                       octokit,
