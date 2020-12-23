@@ -156,7 +156,8 @@ async function GetPullRequest(
           repo,
           pr
         )
-
+        core.info('0')
+        core.info(JSON.stringify(response))
         pullRequests.push(response.data)
 
       }
@@ -255,19 +256,15 @@ async function GetLinkedIssues(
 
       if (response.resource && response.resource.timelineItems) {
         response.resource.timelineItems.nodes.map((node: any) => {
-          core.info(`5`)
-
           if (issues.hasOwnProperty(node.subject.number)) {
             issues[node.subject.number]++
           } else {
             issues[node.subject.number] = 1
           }
         })
-        core.info(`6`)
         core.info(JSON.stringify(issues))
 
         for (const [issue, count] of Object.entries(issues)) {
-          core.info(`7`)
           if (count % 2 !== 0) {
             core.debug(`Getting the linked issues ${issue}`)
             linkedIssues.push(
@@ -278,12 +275,8 @@ async function GetLinkedIssues(
               }).data
             )
           }
-
-          core.info(`8`)
         }
       }
-      core.info(`9`)
-
       resolve(linkedIssues)
     } catch (err) {
       reject(err)

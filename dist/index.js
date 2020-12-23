@@ -144,6 +144,8 @@ function GetPullRequest(octokit, owner, repo, prList) {
                     response.data.commits = yield GetPullRequestCommits(octokit, owner, repo, pr);
                     response.data.comments = yield GetPullRequestComments(octokit, owner, repo, pr);
                     response.data.linkedIssues = yield GetLinkedIssues(octokit, owner, repo, pr);
+                    core.info('0');
+                    core.info(JSON.stringify(response));
                     pullRequests.push(response.data);
                 }
                 resolve(pullRequests);
@@ -225,7 +227,6 @@ function GetLinkedIssues(octokit, owner, repo, pr) {
                 const issues = {};
                 if (response.resource && response.resource.timelineItems) {
                     response.resource.timelineItems.nodes.map((node) => {
-                        core.info(`5`);
                         if (issues.hasOwnProperty(node.subject.number)) {
                             issues[node.subject.number]++;
                         }
@@ -233,10 +234,8 @@ function GetLinkedIssues(octokit, owner, repo, pr) {
                             issues[node.subject.number] = 1;
                         }
                     });
-                    core.info(`6`);
                     core.info(JSON.stringify(issues));
                     for (const [issue, count] of Object.entries(issues)) {
-                        core.info(`7`);
                         if (count % 2 !== 0) {
                             core.debug(`Getting the linked issues ${issue}`);
                             linkedIssues.push(yield octokit.issues.get({
@@ -245,10 +244,8 @@ function GetLinkedIssues(octokit, owner, repo, pr) {
                                 issue_number: issue
                             }).data);
                         }
-                        core.info(`8`);
                     }
                 }
-                core.info(`9`);
                 resolve(linkedIssues);
             }
             catch (err) {
