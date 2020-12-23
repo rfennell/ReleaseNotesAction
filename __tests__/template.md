@@ -16,7 +16,7 @@ Head SHA: {{actionDetails.head_sha}}
 
 ### linkedIssues
     {{#forEach this.linkedIssues}}
-    - **{{this.id}}** 
+    - **{{this.number}}** {{this.title}}
     {{/forEach}}
     
 {{/forEach}}
