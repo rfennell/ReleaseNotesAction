@@ -246,25 +246,28 @@ async function GetLinkedIssues(
       }}`
       )
 
-      const issues: {[key: string]: number} = {}
-      response.resource.timelineItems.nodes.map((node: any) => {
-        if (issues.hasOwnProperty(node.subject.number)) {
-          issues[node.subject.number]++
-        } else {
-          issues[node.subject.number] = 1
-        }
-      })
       const linkedIssues = []
-      for (const [issue, count] of Object.entries(issues)) {
-        if (count % 2 !== 0) {
-          octokit
-          linkedIssues.push(
-            await octokit.issues.get({
-              owner: owner,
-              repo: repo,
-              issue_number: issue
-            }).data
-          )
+
+      const issues: {[key: string]: number} = {}
+      if (response.resource && response.resource.timelineItems) {
+        response.resource.timelineItems.nodes.map((node: any) => {
+          if (issues.hasOwnProperty(node.subject.number)) {
+            issues[node.subject.number]++
+          } else {
+            issues[node.subject.number] = 1
+          }
+        })
+        for (const [issue, count] of Object.entries(issues)) {
+          if (count % 2 !== 0) {
+            core.debug(`Getting the linked issues ${issue}`)
+            linkedIssues.push(
+              await octokit.issues.get({
+                owner: owner,
+                repo: repo,
+                issue_number: issue
+              }).data
+            )
+          }
         }
       }
 
