@@ -90,7 +90,7 @@ function ProcessTemplate(template, actionDetails) {
         });
         const handlebarsTemplate = handlebars.compile(template);
         output = handlebarsTemplate({
-            actionDetails: actionDetails
+            'actionDetails': actionDetails
         });
         core.info('Completed processing template');
     }

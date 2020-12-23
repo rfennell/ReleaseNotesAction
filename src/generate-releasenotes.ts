@@ -67,7 +67,7 @@ function ProcessTemplate(template: string, actionDetails: any): string {
     const handlebarsTemplate = handlebars.compile(template)
 
     output = handlebarsTemplate({
-      actionDetails: actionDetails
+      'actionDetails': actionDetails
     })
 
     core.info('Completed processing template')
