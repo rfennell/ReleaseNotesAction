@@ -195,7 +195,6 @@ function GetLinkedIssues(octokit, owner, repo, pr) {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
                 core.info(`Getting issues linked to PR ${pr.number}`);
-                core.info(`0`);
                 // based on https://stackoverflow.com/questions/60717142/getting-linked-issues-and-projects-associated-with-a-pull-request-form-github-ap
                 // as there is no API direct call
                 const response = yield octokit.graphql(`{resource(url: "https://github.com/rfennell/ActionPlayground/pull/${pr.number}") {
@@ -222,13 +221,9 @@ function GetLinkedIssues(octokit, owner, repo, pr) {
           }
         }
       }}`);
-                core.info(`1`);
                 const linkedIssues = [];
-                core.info(`2`);
                 const issues = {};
-                core.info(`3`);
                 if (response.resource && response.resource.timelineItems) {
-                    core.info(`4`);
                     response.resource.timelineItems.nodes.map((node) => {
                         core.info(`5`);
                         if (issues.hasOwnProperty(node.subject.number)) {
@@ -238,7 +233,10 @@ function GetLinkedIssues(octokit, owner, repo, pr) {
                             issues[node.subject.number] = 1;
                         }
                     });
+                    core.info(`6`);
+                    core.info(JSON.stringify(issues));
                     for (const [issue, count] of Object.entries(issues)) {
+                        core.info(`7`);
                         if (count % 2 !== 0) {
                             core.debug(`Getting the linked issues ${issue}`);
                             linkedIssues.push(yield octokit.issues.get({
@@ -247,8 +245,10 @@ function GetLinkedIssues(octokit, owner, repo, pr) {
                                 issue_number: issue
                             }).data);
                         }
+                        core.info(`8`);
                     }
                 }
+                core.info(`9`);
                 resolve(linkedIssues);
             }
             catch (err) {
