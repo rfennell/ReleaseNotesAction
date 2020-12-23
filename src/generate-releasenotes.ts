@@ -220,6 +220,8 @@ async function GetLinkedIssues(
     try {
       core.info(`Getting issues linked to PR ${pr.number}`)
 
+      core.info(`0`)
+
       // based on https://stackoverflow.com/questions/60717142/getting-linked-issues-and-projects-associated-with-a-pull-request-form-github-ap
       // as there is no API direct call
       const response = await octokit.graphql(
