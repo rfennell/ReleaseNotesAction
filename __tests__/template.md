@@ -11,9 +11,13 @@ Head SHA: {{actionDetails.head_sha}}
     {{/forEach}}
 ### Comments
     {{#forEach this.comment}}
-    - **{{this.id}}** 
+    - {{this.body}}
     {{/forEach}}
 
-
+### linkedIssues
+    {{#forEach this.linkedIssues}}
+    - **{{this.id}}** 
+    {{/forEach}}
+    
 {{/forEach}}
 

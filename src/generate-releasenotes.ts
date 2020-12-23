@@ -216,7 +216,7 @@ async function GetPullRequestComments(
         repo: repo,
         pull_number: pr.number
       })
-
+      core.info(JSON.stringify(response))
       resolve(response.data)
     } catch (err) {
       reject(err)
@@ -287,6 +287,8 @@ async function GetLinkedIssues(
           }
         }
       }
+      core.info(JSON.stringify(linkedIssues))
+
       resolve(linkedIssues)
     } catch (err) {
       reject(err)
