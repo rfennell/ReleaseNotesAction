@@ -119,7 +119,7 @@ function GetRunDetails(octokit, owner, repo, run_id) {
                 else {
                     core.info(`No associated PRs with run`);
                 }
-                response(actionDetails);
+                resolve(actionDetails);
             }
             catch (error) {
                 core.setFailed(error.message);
@@ -144,14 +144,8 @@ function GetPullRequest(octokit, owner, repo, prList) {
                     response.data.commits = yield GetPullRequestCommits(octokit, owner, repo, pr);
                     response.data.comments = yield GetPullRequestComments(octokit, owner, repo, pr);
                     response.data.linkedIssues = yield GetLinkedIssues(octokit, owner, repo, pr);
-                    core.info('0');
-                    core.info(JSON.stringify(response));
-                    core.info('1');
-                    core.info(JSON.stringify(response.data));
                     pullRequests.push(response.data);
-                    core.info('2');
                 }
-                core.info(JSON.stringify(pullRequests));
                 resolve(pullRequests);
             }
             catch (err) {
