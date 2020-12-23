@@ -248,12 +248,21 @@ async function GetLinkedIssues(
         }
       }}`
       )
-
+      core.info(`1`)
       const linkedIssues = []
+      core.info(`2`)
 
       const issues: {[key: string]: number} = {}
+
+      core.info(`3`)
+
       if (response.resource && response.resource.timelineItems) {
+        
+        core.info(`4`)
+
         response.resource.timelineItems.nodes.map((node: any) => {
+          core.info(`5`)
+
           if (issues.hasOwnProperty(node.subject.number)) {
             issues[node.subject.number]++
           } else {
