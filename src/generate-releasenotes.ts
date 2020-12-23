@@ -25,7 +25,7 @@ export async function run(): Promise<void> {
     core.info(`Template File: ${templateFile}`)
     core.info(`Output File: ${outputFile}`)
 
-    // overrrides to allow local testing
+    // overrides to allow local testing
     const overrideRepo = repository.name
     const overrideOwner = repository.owner.login
 
