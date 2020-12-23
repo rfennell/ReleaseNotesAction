@@ -211,10 +211,10 @@ async function GetPullRequestComments(
   return new Promise<any[]>(async (resolve, reject) => {
     try {
       core.info(`Getting the comments associated with PR ${pr.number}`)
-      const response = await octokit.pulls.listReviewComments({
+      const response = await octokit.issues.listComments({
         owner: owner,
         repo: repo,
-        pull_number: pr.number
+        issue_number: pr.number
       })
       core.info(JSON.stringify(response))
       resolve(response.data)
@@ -276,14 +276,13 @@ async function GetLinkedIssues(
 
         for (const [issue, count] of Object.entries(issues)) {
           if (count % 2 !== 0) {
-            core.debug(`Getting the linked issues ${issue}`)
-            linkedIssues.push(
-              await octokit.issues.get({
-                owner: owner,
-                repo: repo,
-                issue_number: issue
-              }).data
-            )
+            core.debug(`Getting the linked issue ${issue}`)
+            const issueDetails = await octokit.issues.get({
+              owner: owner,
+              repo: repo,
+              issue_number: issue
+            })
+            linkedIssues.push(issueDetails.data)
           }
         }
       }
