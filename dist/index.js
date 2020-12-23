@@ -82,14 +82,14 @@ function ProcessTemplate(template, actionDetails) {
         core.info('Processing template');
         const handlebars = __webpack_require__(7492);
         core.info('0');
-        const helpers = __webpack_require__(9497)();
-        /*
-        core.info('1')
+        __webpack_require__(9497)({
+            handlebars: handlebars
+        });
+        core.info('1');
         // add a custom helper to expand json
-        handlebars.registerHelper('json', function (context: any) {
-          return JSON.stringify(context)
-        })
-        */
+        handlebars.registerHelper('json', function (context) {
+            return JSON.stringify(context);
+        });
         core.info('2');
         const handlebarsTemplate = handlebars.compile(template);
         core.info('3');

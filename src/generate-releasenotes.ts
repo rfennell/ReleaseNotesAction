@@ -59,16 +59,15 @@ function ProcessTemplate(template: string, actionDetails: any): string {
     const handlebars = require('handlebars')
 
     core.info('0')
-    
-    const helpers = require('handlebars-helpers')()
+    require('handlebars-helpers')({
+      handlebars: handlebars
+    })
 
-    /*
     core.info('1')
     // add a custom helper to expand json
     handlebars.registerHelper('json', function (context: any) {
       return JSON.stringify(context)
     })
-    */
 
     core.info('2')
     const handlebarsTemplate = handlebars.compile(template)
