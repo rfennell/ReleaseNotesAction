@@ -146,8 +146,12 @@ function GetPullRequest(octokit, owner, repo, prList) {
                     response.data.linkedIssues = yield GetLinkedIssues(octokit, owner, repo, pr);
                     core.info('0');
                     core.info(JSON.stringify(response));
+                    core.info('1');
+                    core.info(JSON.stringify(response.data));
                     pullRequests.push(response.data);
+                    core.info('2');
                 }
+                core.info(JSON.stringify(pullRequests));
                 resolve(pullRequests);
             }
             catch (err) {
@@ -234,7 +238,6 @@ function GetLinkedIssues(octokit, owner, repo, pr) {
                             issues[node.subject.number] = 1;
                         }
                     });
-                    core.info(JSON.stringify(issues));
                     for (const [issue, count] of Object.entries(issues)) {
                         if (count % 2 !== 0) {
                             core.debug(`Getting the linked issues ${issue}`);

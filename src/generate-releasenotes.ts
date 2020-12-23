@@ -158,9 +158,13 @@ async function GetPullRequest(
         )
         core.info('0')
         core.info(JSON.stringify(response))
+        core.info('1')
+        core.info(JSON.stringify(response.data))
         pullRequests.push(response.data)
+        core.info('2')
 
       }
+      core.info(JSON.stringify(pullRequests))
 
       resolve(pullRequests)
     } catch (err) {
@@ -262,7 +266,6 @@ async function GetLinkedIssues(
             issues[node.subject.number] = 1
           }
         })
-        core.info(JSON.stringify(issues))
 
         for (const [issue, count] of Object.entries(issues)) {
           if (count % 2 !== 0) {
