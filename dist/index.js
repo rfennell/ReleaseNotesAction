@@ -54,6 +54,7 @@ function run() {
             const GITHUB_RUN_ID = parseInt(process.env.GITHUB_RUN_ID || '-1');
             const templateFile = core.getInput('templateFile');
             const outputFile = core.getInput('outputFile');
+            core.info(__dirname);
             core.info(`Getting the details of the workflow run ${GITHUB_RUN_ID} from repo ${repository.owner.login}/${repository.name}`);
             core.info(`Template File: ${templateFile}`);
             core.info(`Output File: ${outputFile}`);

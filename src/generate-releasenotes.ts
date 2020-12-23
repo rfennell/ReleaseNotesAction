@@ -19,6 +19,8 @@ export async function run(): Promise<void> {
     const templateFile = core.getInput('templateFile')
     const outputFile = core.getInput('outputFile')
 
+    core.info(__dirname)
+
     core.info(
       `Getting the details of the workflow run ${GITHUB_RUN_ID} from repo ${repository.owner.login}/${repository.name}`
     )
