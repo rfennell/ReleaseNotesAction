@@ -36,13 +36,21 @@ export async function run(): Promise<void> {
         GITHUB_RUN_ID
       )
 
+      
       core.debug(`---THE API OBJECT START---`)
       core.debug(JSON.stringify(actionDetails))
       core.debug(`---THE API OBJECT END---`)
 
       const template = fs.readFileSync(templateFile, 'utf8').toString()
 
-      fs.writeFileSync(outputFile, ProcessTemplate(template, actionDetails))
+      const output = ProcessTemplate(template, actionDetails)
+
+      core.debug(`---THE OUTPUT OBJECT START---`)
+      core.debug(JSON.stringify(output))
+      core.debug(`---THE OUTPUT OBJECT END---`)
+
+      fs.writeFileSync(outputFile, output)
+      
     } else {
       core.setFailed(`Cannot find template file ${templateFile}`)
     }
@@ -58,10 +66,12 @@ function ProcessTemplate(template: string, actionDetails: any): string {
 
     const handlebars = require('handlebars')
 
+    /*
     core.info('0')
-    require('handlebars-helpers')({
+    const helpers = require('handlebars-helpers')({
       handlebars: handlebars
     })
+    */
 
     core.info('1')
     // add a custom helper to expand json
