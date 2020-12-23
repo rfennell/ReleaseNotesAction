@@ -2,7 +2,7 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import * as fs from 'fs'
 
-export async function run(overrideOwner?: string, overrideRepo?: string ): Promise<void> {
+export async function run(): Promise<void> {
   try {
     // Get authenticated GitHub client (Ocktokit): https://github.com/actions/toolkit/tree/master/packages/github#usage
     // Pass in the GITHUB_TOKEN in the same style as used by https://github.com/actions/create-release

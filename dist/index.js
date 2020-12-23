@@ -40,7 +40,7 @@ exports.run = void 0;
 const core = __importStar(__webpack_require__(2186));
 const github = __importStar(__webpack_require__(5438));
 const fs = __importStar(__webpack_require__(5747));
-function run(overrideOwner, overrideRepo) {
+function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Get authenticated GitHub client (Ocktokit): https://github.com/actions/toolkit/tree/master/packages/github#usage
