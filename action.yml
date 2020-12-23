@@ -12,4 +12,4 @@ inputs:
     default: 'releasenotes.md'
 runs:
   using: 'node12'
-  main: 'dist/index.js'
+  main: 'lib/main.js'
