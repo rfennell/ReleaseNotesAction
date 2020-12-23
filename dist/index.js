@@ -81,14 +81,18 @@ function ProcessTemplate(template, actionDetails) {
     if (template.length > 0) {
         core.info('Processing template');
         const handlebars = __webpack_require__(7492);
+        core.info('0');
         const helpers = __webpack_require__(9497)({
             handlebars: handlebars
         });
+        core.info('1');
         // add a custom helper to expand json
         handlebars.registerHelper('json', function (context) {
             return JSON.stringify(context);
         });
+        core.info('2');
         const handlebarsTemplate = handlebars.compile(template);
+        core.info('3');
         output = handlebarsTemplate({
             'actionDetails': actionDetails
         });
