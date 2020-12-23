@@ -25,6 +25,7 @@ export async function run(): Promise<void> {
     core.info(`Template File: ${templateFile}`)
     core.info(`Output File: ${outputFile}`)
 
+    
     if (fs.existsSync(templateFile)) {
       const actionDetails = await GetRunDetails(
         octokit,

@@ -6,7 +6,7 @@ inputs:
     required: true
     description: 'The path to the Handlebars template'
     default: 'template.md'
-  ouputfile:
+  outputfile:
     required: true
     description: 'The path to the generated release notes'
     default: 'releasenotes.md'
