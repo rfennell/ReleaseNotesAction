@@ -57,7 +57,7 @@ function run() {
             core.info(`Getting the details of the workflow run ${GITHUB_RUN_ID} from repo ${repository.owner.login}/${repository.name}`);
             core.info(`Template File: ${templateFile}`);
             core.info(`Output File: ${outputFile}`);
-            if (fs.existsSync(templateFile) === false) {
+            if (fs.existsSync(templateFile)) {
                 const actionDetails = yield GetRunDetails(octokit, repository.owner.login, repository.name, GITHUB_RUN_ID);
                 core.debug(`---THE API OBJECT START---`);
                 core.debug(JSON.stringify(actionDetails));
@@ -201,6 +201,7 @@ function GetLinkedIssues(octokit, owner, repo, pr) {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
                 core.info(`Getting issues linked to PR ${pr.number}`);
+                core.info(`0`);
                 // based on https://stackoverflow.com/questions/60717142/getting-linked-issues-and-projects-associated-with-a-pull-request-form-github-ap
                 // as there is no API direct call
                 const response = yield octokit.graphql(`{resource(url: "https://github.com/rfennell/ActionPlayground/pull/${pr.number}") {
