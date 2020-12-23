@@ -50,7 +50,7 @@ export async function run(): Promise<void> {
       core.debug(`---THE OUTPUT OBJECT END---`)
 
       fs.writeFileSync(outputFile, output)
-      
+
     } else {
       core.setFailed(`Cannot find template file ${templateFile}`)
     }
@@ -66,12 +66,8 @@ function ProcessTemplate(template: string, actionDetails: any): string {
 
     const handlebars = require('handlebars')
 
-    /*
     core.info('0')
-    const helpers = require('handlebars-helpers')({
-      handlebars: handlebars
-    })
-    */
+    const helpers = require('handlebars-helpers')()
 
     core.info('1')
     // add a custom helper to expand json
