@@ -10,7 +10,7 @@ Head SHA: {{actionDetails.head_sha}}
     - **{{this.sha}}** {{this.commit.message}}
     {{/forEach}}
 ### Comments
-    {{#forEach this.comment}}
+    {{#forEach this.comments}}
     - {{this.body}}
     {{/forEach}}
 
