@@ -1,11 +1,15 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Release Notes'
+description: 'Generate Release Notes using the Github API and a Handlebars template'
+author: 'Richard Fennell'
 inputs:
-  milliseconds: # change this
+  templateFile:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'The path to the Handlebars template'
+    default: 'template.md'
+  outputfile:
+    required: true
+    description: 'The path to the generated release notes'
+    default: 'releasenotes.md'
 runs:
   using: 'node12'
-  main: 'dist/index.js'
+  main: 'lib/main.js'
