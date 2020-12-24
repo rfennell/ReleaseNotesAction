@@ -2,44 +2,32 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import * as fs from 'fs'
 
-export async function run(): Promise<void> {
+export async function generate(
+  octokit: any, 
+  owner: string, 
+  repo: string,  
+  run_id: number, 
+  templateFile: string, 
+  outputFile: string): Promise<void> {
+
   try {
-    // Get authenticated GitHub client (Ocktokit): https://github.com/actions/toolkit/tree/master/packages/github#usage
-    // Pass in the GITHUB_TOKEN in the same style as used by https://github.com/actions/create-release
-    const GITHUB_TOKEN = process.env.GITHUB_TOKEN || ''
-    const octokit = github.getOctokit(GITHUB_TOKEN)
- 
-    // get the context
-    const context = (github as any).context
-
-    // the run details
-    const repository = context.payload.repository
-    const GITHUB_RUN_ID: number = parseInt(process.env.GITHUB_RUN_ID || '-1')
-
-    const templateFile = core.getInput('templateFile')
-    const outputFile = core.getInput('outputFile')
-
     core.info(
-      `Getting the details of the workflow run ${GITHUB_RUN_ID} from repo ${repository.owner.login}/${repository.name}`
+      `Getting the details of the workflow run ${run_id} from repo ${owner}/${repo}`
     )
     core.info(`Template File: ${templateFile}`)
     core.info(`Output File: ${outputFile}`)
-
-    // overrides to allow local testing
-    const overrideRepo = repository.name
-    const overrideOwner = repository.owner.login
-
-    core.info(`Owner: ${overrideOwner}`)
-    core.info(`Repo: ${overrideRepo}`)
-
+    core.info(`Owner: ${owner}`)
+    core.info(`Repo: ${repo}`)
+    
     if (fs.existsSync(templateFile)) {
+      core.info(`Loaded template file: ${templateFile}`)
       const actionDetails = await GetRunDetails(
         octokit,
-        overrideOwner,
-        overrideRepo,
-        GITHUB_RUN_ID
+        owner,
+        repo,
+        run_id
       )
-      
+
       core.debug(`---THE API OBJECT START---`)
       core.debug(JSON.stringify(actionDetails))
       core.debug(`---THE API OBJECT END---`)
@@ -99,6 +87,7 @@ async function GetRunDetails(
 ): Promise<any[]> {
   return new Promise<any[]>(async (resolve, reject) => {
     try {
+
       const response = await octokit.actions.getWorkflowRun({
         owner: owner,
         repo: repo,
@@ -115,7 +104,7 @@ async function GetRunDetails(
         )
 
         // replace the url PR links with the details
-        actionDetails.pull_requests = await GetPullRequest(
+        actionDetails.pull_requests = await GetPullRequests(
           octokit,
           owner,
           repo,
@@ -132,7 +121,7 @@ async function GetRunDetails(
   })
 }
 
-async function GetPullRequest(
+async function GetPullRequests(
   octokit: any,
   owner: any,
   repo: any,
@@ -233,10 +222,10 @@ async function GetLinkedIssues(
     try {
       core.info(`Getting issues linked to PR ${pr.number}`)
 
-      // based on https://stackoverflow.com/questions/60717142/getting-linked-issues-and-projects-associated-with-a-pull-request-form-github-ap
+      // based on https://github.community/t/get-all-issues-linked-to-a-pull-request/14653/6
       // as there is no API direct call
       const response = await octokit.graphql(
-        `{resource(url: "https://github.com/rfennell/ActionPlayground/pull/${pr.number}") {
+        `{resource(url: "https://github.com/${owner}/${repo}/pull/${pr.number}") {
         ... on PullRequest {
           timelineItems(itemTypes: [CONNECTED_EVENT, DISCONNECTED_EVENT], first: 250) {
             nodes {
