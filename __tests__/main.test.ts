@@ -24,6 +24,7 @@ describe('Create Release Notes', () => {
 
     core.getInput.mockReturnValueOnce('templateFile')
     core.getInput.mockReturnValueOnce('outFile')
+    core.getInput.mockReturnValueOnce('extensions')
   })
 
   test('Can create release notes', async () => {
@@ -36,7 +37,8 @@ describe('Create Release Notes', () => {
       'repo',
       123,
       'templateFile',
-      'outFile'
+      'outFile',
+      'extensions'
     )
   })
 
