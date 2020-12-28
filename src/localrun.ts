@@ -4,9 +4,9 @@ import * as github from '@actions/github'
 async function run(): Promise<number> {
   var promise = new Promise<number>(async (resolve, reject) => {
     try {
-      if (process.argv.length !== 14) {
+      if (process.argv.length !== 14 && process.argv.length !== 16) {
         console.error(
-          'USAGE: node LocalTester.js --pat <GitHub-PAT> --owner <Repo owner> --repo <Repo> --runid <Number> --templatefile <File path> --outputfile <File path>'
+          'USAGE: node LocalTester.js --pat <GitHub-PAT> --owner <Repo owner> --repo <Repo> --runid <Number> --templatefile <File path> --outputfile <File path> --extensionsFile <Optional Full File path>'
         )
       } else {
         console.log('Starting Local Tester')
@@ -17,6 +17,7 @@ async function run(): Promise<number> {
         const runid = argv['runid']
         const templatefile = argv['templatefile']
         const outputfile = argv['outputfile']
+        const extensionsFile = argv['extensionsFile']
 
         console.log(`Command Line Arguments:`)
         console.log(`  --pat: ${pat}`)
@@ -25,6 +26,7 @@ async function run(): Promise<number> {
         console.log(`  --runid: ${runid}`)
         console.log(`  --templatefile: ${templatefile}`)
         console.log(`  --outputfile: ${outputfile}`)
+        console.log(`  --extensionsFile: ${extensionsFile}`)
 
         const octokit = github.getOctokit(pat)
 
@@ -34,7 +36,8 @@ async function run(): Promise<number> {
           repo,
           runid,
           templatefile,
-          outputfile
+          outputfile,
+          extensionsFile
         )
       }
     } catch (err) {

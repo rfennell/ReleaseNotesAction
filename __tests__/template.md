@@ -1,11 +1,11 @@
 # Release Notes 
 ## Run Details
-- Workflow: {{actionDetails.name}} 
-- Head Branch: {{actionDetails.head_branch}} 
-- Head SHA: {{actionDetails.head_sha}} 
+- Workflow: {{runDetails.name}} 
+- Head Branch: {{runDetails.head_branch}} 
+- Head SHA: {{runDetails.head_sha}} 
 
 ## Pull Requests
-{{#forEach actionDetails.pull_requests}}
+{{#forEach runDetails.pull_requests}}
 **{{this.number}}** {{this.title}}
 ### Commits
   {{#forEach this.commits}}
@@ -23,3 +23,5 @@
     
 {{/forEach}}
 
+### A custom extension
+{{foo}}

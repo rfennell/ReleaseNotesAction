@@ -8,8 +8,14 @@ inputs:
     default: 'template.md'
   outputfile:
     required: true
-    description: 'The path to the generated release notes'
     default: 'releasenotes.md'
+  extensionsFile:
+    required: false
+    description: 'The path to the an optional module of custom Handlebars functions'
+    default: ''
 runs:
   using: 'node12'
   main: 'lib/main.js'
+branding:
+  icon: 'edit'  
+  color: 'blue'

@@ -8,7 +8,8 @@ export async function generate(
   repo: string,
   run_id: number,
   templateFile: string,
-  outputFile: string
+  outputFile: string,
+  extensionsFile: string
 ): Promise<void> {
   try {
     core.info(
@@ -21,15 +22,15 @@ export async function generate(
 
     if (fs.existsSync(templateFile)) {
       core.info(`Loaded template file: ${templateFile}`)
-      const actionDetails = await GetRunDetails(octokit, owner, repo, run_id)
+      const runDetails = await GetRunDetails(octokit, owner, repo, run_id)
 
       core.debug(`---THE API OBJECT START---`)
-      core.debug(JSON.stringify(actionDetails))
+      core.debug(JSON.stringify(runDetails))
       core.debug(`---THE API OBJECT END---`)
 
       const template = fs.readFileSync(templateFile, 'utf8').toString()
 
-      const output = ProcessTemplate(template, actionDetails)
+      const output = ProcessTemplate(template, extensionsFile, runDetails)
 
       core.debug(`---THE OUTPUT OBJECT START---`)
       core.debug(JSON.stringify(output))
@@ -44,7 +45,11 @@ export async function generate(
   }
 }
 
-function ProcessTemplate(template: string, actionDetails: any): string {
+function ProcessTemplate(
+  template: string,
+  extensionsFile: string,
+  runDetails: any
+): string {
   let output = ''
   if (template.length > 0) {
     core.info('Processing template')
@@ -60,10 +65,22 @@ function ProcessTemplate(template: string, actionDetails: any): string {
       return JSON.stringify(context)
     })
 
+    if (extensionsFile) {
+      if (fs.existsSync(extensionsFile)) {
+        core.info(`Registering extensions in ${extensionsFile}`)
+        var customFunctions = require(extensionsFile)
+        handlebars.registerHelper(customFunctions)
+      } else {
+        core.setFailed(
+          `Cannot find the expected extensions file ${extensionsFile}`
+        )
+      }
+    }
+
     const handlebarsTemplate = handlebars.compile(template)
 
     output = handlebarsTemplate({
-      actionDetails: actionDetails
+      runDetails: runDetails
     })
 
     core.info('Completed processing template')
@@ -88,26 +105,26 @@ async function GetRunDetails(
       })
 
       // we only need the data not the full response
-      const actionDetails = response.data
+      const runDetails = response.data
 
       // Loop to get the PR details
-      if (actionDetails.pull_requests) {
+      if (runDetails.pull_requests) {
         core.info(
-          `There are ${actionDetails.pull_requests.length} associated PRs with run`
+          `There are ${runDetails.pull_requests.length} associated PRs with run`
         )
 
         // replace the url PR links with the details
-        actionDetails.pull_requests = await GetPullRequests(
+        runDetails.pull_requests = await GetPullRequests(
           octokit,
           owner,
           repo,
-          actionDetails.pull_requests
+          runDetails.pull_requests
         )
       } else {
         core.info(`No associated PRs with run`)
       }
 
-      resolve(actionDetails)
+      resolve(runDetails)
     } catch (error) {
       core.setFailed(error.message)
     }

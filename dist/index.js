@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.generate = void 0;
 const core = __importStar(__webpack_require__(2186));
 const fs = __importStar(__webpack_require__(5747));
-function generate(octokit, owner, repo, run_id, templateFile, outputFile) {
+function generate(octokit, owner, repo, run_id, templateFile, outputFile, extensionsFile) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             core.info(`Getting the details of the workflow run ${run_id} from repo ${owner}/${repo}`);
@@ -49,12 +49,12 @@ function generate(octokit, owner, repo, run_id, templateFile, outputFile) {
             core.info(`Repo: ${repo}`);
             if (fs.existsSync(templateFile)) {
                 core.info(`Loaded template file: ${templateFile}`);
-                const actionDetails = yield GetRunDetails(octokit, owner, repo, run_id);
+                const runDetails = yield GetRunDetails(octokit, owner, repo, run_id);
                 core.debug(`---THE API OBJECT START---`);
-                core.debug(JSON.stringify(actionDetails));
+                core.debug(JSON.stringify(runDetails));
                 core.debug(`---THE API OBJECT END---`);
                 const template = fs.readFileSync(templateFile, 'utf8').toString();
-                const output = ProcessTemplate(template, actionDetails);
+                const output = ProcessTemplate(template, extensionsFile, runDetails);
                 core.debug(`---THE OUTPUT OBJECT START---`);
                 core.debug(JSON.stringify(output));
                 core.debug(`---THE OUTPUT OBJECT END---`);
@@ -70,7 +70,7 @@ function generate(octokit, owner, repo, run_id, templateFile, outputFile) {
     });
 }
 exports.generate = generate;
-function ProcessTemplate(template, actionDetails) {
+function ProcessTemplate(template, extensionsFile, runDetails) {
     let output = '';
     if (template.length > 0) {
         core.info('Processing template');
@@ -82,9 +82,19 @@ function ProcessTemplate(template, actionDetails) {
         handlebars.registerHelper('json', function (context) {
             return JSON.stringify(context);
         });
+        if (extensionsFile) {
+            if (fs.existsSync(extensionsFile)) {
+                core.info(`Registering extensions in ${extensionsFile}`);
+                var customFunctions = require(extensionsFile);
+                handlebars.registerHelper(customFunctions);
+            }
+            else {
+                core.setFailed(`Cannot find the expected extensions file ${extensionsFile}`);
+            }
+        }
         const handlebarsTemplate = handlebars.compile(template);
         output = handlebarsTemplate({
-            actionDetails: actionDetails
+            runDetails: runDetails
         });
         core.info('Completed processing template');
     }
@@ -103,17 +113,17 @@ function GetRunDetails(octokit, owner, repo, run_id) {
                     run_id: run_id
                 });
                 // we only need the data not the full response
-                const actionDetails = response.data;
+                const runDetails = response.data;
                 // Loop to get the PR details
-                if (actionDetails.pull_requests) {
-                    core.info(`There are ${actionDetails.pull_requests.length} associated PRs with run`);
+                if (runDetails.pull_requests) {
+                    core.info(`There are ${runDetails.pull_requests.length} associated PRs with run`);
                     // replace the url PR links with the details
-                    actionDetails.pull_requests = yield GetPullRequests(octokit, owner, repo, actionDetails.pull_requests);
+                    runDetails.pull_requests = yield GetPullRequests(octokit, owner, repo, runDetails.pull_requests);
                 }
                 else {
                     core.info(`No associated PRs with run`);
                 }
-                resolve(actionDetails);
+                resolve(runDetails);
             }
             catch (error) {
                 core.setFailed(error.message);
@@ -302,10 +312,11 @@ function run() {
             const GITHUB_RUN_ID = parseInt(process.env.GITHUB_RUN_ID || '-1');
             const templateFile = core.getInput('templateFile');
             const outputFile = core.getInput('outputFile');
+            const extensionsFile = core.getInput('extensionsFile');
             // overrides to allow local testing
             const repo = repository.name;
             const owner = repository.owner.login;
-            yield releaseNotesModule.generate(octokit, owner, repo, GITHUB_RUN_ID, templateFile, outputFile);
+            yield releaseNotesModule.generate(octokit, owner, repo, GITHUB_RUN_ID, templateFile, outputFile, extensionsFile);
             resolve(0);
         }));
         return promise;

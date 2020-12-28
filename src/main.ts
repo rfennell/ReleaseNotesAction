@@ -17,6 +17,7 @@ export async function run(): Promise<number> {
 
     const templateFile = core.getInput('templateFile')
     const outputFile = core.getInput('outputFile')
+    const extensionsFile = core.getInput('extensionsFile')
 
     // overrides to allow local testing
     const repo = repository.name
@@ -28,7 +29,8 @@ export async function run(): Promise<number> {
       repo,
       GITHUB_RUN_ID,
       templateFile,
-      outputFile
+      outputFile,
+      extensionsFile
     )
     resolve(0)
   })
