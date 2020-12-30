@@ -1,103 +1,123 @@
-<p align="center">
-  <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
-</p>
+# ReleaseNotesAction
 
-# Create a JavaScript Action using TypeScript
+This Action uses the GitHub API and a [Handlebars](https://handlebarsjs.com/) based template to generate a release notes file. This file can be used in a variety of ways, such as being attached to a release, or uploaded to an external store such as a WIKI
 
-Use this template to bootstrap the creation of a TypeScript action.:rocket:
+## Usage
 
-This template includes compilation support, tests, a validation workflow, publishing, and versioning guidance.  
+```
+- uses: rfennell/ReleaseNotesAction@v1
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided automatically, you do not need to create your own token
+  with:
+    templateFile: '${{ github.workspace }}//template.md'
+    outputfile: '${{ github.workspace }}//releasenotes.md'
+    extensionsFile: '${{ github.workspace }}//customextensions.js'
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
+``` 
+## Parameters
 
-## Create an action from this template
+The task needs the `GITHUB_TOKEN` environment variable set with a valid GitHub token, either the one auto-generated for each workflow run, or a [personal one](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) created with sufficient permissions to access the API. 
 
-Click the `Use this Template` and provide the new repo details for your action
+As well as the `GITHUB_TOKEN` the action also takes the following parameters
 
-## Code in Main
+* templateFile: The path to the Handlebar template file. (Required)
+* outputFile: The path for the file that will be created. (Required)
+* extensionsFile: The path to the an optional module of custom Handlebars functions. (Optional)
 
-Install the dependencies  
-```bash
-$ npm install
+## Template File
+The template allows you to create your own document layout using [Handlebars](https://handlebarsjs.com/) syntax. A template written in this format is as follows
+
+```
+# Release Notes 
+## Run Details
+- Workflow: {{runDetails.name}} 
+- Head Branch: {{runDetails.head_branch}} 
+- Head SHA: {{runDetails.head_sha}} 
+
+## Pull Requests
+{{#forEach runDetails.pull_requests}}
+**{{this.number}}** {{this.title}}
+### Commits
+  {{#forEach this.commits}}
+  - **{{this.sha}}** {{this.commit.message}}
+  {{/forEach}}
+### Comments
+ {{#forEach this.comments}}
+ - {{this.body}}
+ {{/forEach}}
+
+### linkedIssues
+ {{#forEach this.linkedIssues}}
+ - **{{this.number}}** {{this.title}}
+ {{/forEach}}
+    
+{{/forEach}}
+
 ```
 
-Build the typescript and package it for distribution
-```bash
-$ npm run build && npm run package
+What is done behind the scenes is that each `{{properties}}` block in the template is expanded by the Handlebars engine. The property object structure available to get data from at runtime are:
+
+* **runDetails** – the details of the current workflow run
+  - **pull_requests**  - the array of pull requests associated with the run
+    - **commits**  - the array of commits associated with the PR
+    - **comments**  - the array of comment associated with the PR
+    - **linkedIssues**  - the array of linked issues with the PR
+
+> **Note:** To dump all possible properties of an object there are two options:
+> - Via the template, using the custom Handlebars extension `{{json propertyToDump}}`. This will include a dump of the object properties in the generated release notes file.
+> - If you [enable the Actions debug log](https://docs.github.com/en/free-pro-team@latest/actions/managing-workflow-runs/enabling-debug-logging) the API returned data and the generated release notes text will be dumped into the action log (note this can make for a very large an unresponsive log file)
+
+> **Note:** If a field contains escaped HTML encoded data this can be returned its original format with the Handlebars triple brackets format `{{{sample.field}}}` 
+
+### Handlebar Extensions
+ The [Handlebars Helpers](https://github.com/helpers/handlebars-helpers) extension library is also pre-load, this provides over 120 useful extensions to aid in data manipulation when templating. They are used the form
+
+```
+## To confirm the Handlebars-helpers is work
+The year is {{year}} 
+We can capitalize "foo bar baz" {{capitalizeAll "foo bar baz"}}
 ```
 
-Run the tests :heavy_check_mark:  
-```bash
-$ npm test
+In addition to the [Handlebars Helpers](https://github.com/helpers/handlebars-helpers) extension library, there is also custom Helpers pre-loaded specific to the needs of this Action
 
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
+- `json` that will dump the contents of any object. This is useful when working out what can be displayed in a template, though there are other ways to dump objects to files (see above)
 
-...
+```
+## The contents of the run object
+{{json runDetails}}
 ```
 
-## Change action.yml
-
-The action.yml contains defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-import * as core from '@actions/core';
-...
-
-async function run() {
-  try { 
-      ...
-  } 
-  catch (error) {
-    core.setFailed(error.message);
+Finally there is also support for your own custom extension libraries. These are provided via an optional JavaScript file which is loaded into the Handlebars templating engine. The file can contain one or more functions, within the `module.exports` block, in the following format
+```
+module.exports = {
+  foo() {
+    return 'Returns foo';
   }
-}
-
-run()
+};
 ```
 
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
-
-## Publish to a distribution branch
-
-Actions are run from GitHub repos so we will checkin the packed dist folder. 
-
-Then run [ncc](https://github.com/zeit/ncc) and push the results:
-```bash
-$ npm run package
-$ git add dist
-$ git commit -a -m "prod dependencies"
-$ git push origin releases/v1
+and can be consumed in a template as shown below
+```
+## To confirm our custom extension works
+We can call our custom extension {{foo}}
 ```
 
-Note: We recommend using the `--license` option for ncc, which will create a license file for all of the production node modules used in your project.
+### Local Test Runner
+Within the [repo for this action](https://github.com/rfennell/ReleaseNotesAction) a local runner is provided that can provide an easier means to develop templates and custom extensions. It allows all the parameters usually passed in by a GitHub workflow to be provided via the command line.
 
-Your action is now published! :rocket: 
+To build the action locally, from the root of the repo
 
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Validate
-
-You can now validate the action by referencing `./` in a workflow in your repo (see [test.yml](.github/workflows/test.yml))
-
-```yaml
-uses: ./
-with:
-  milliseconds: 1000
+```
+npm install
+npm run build
 ```
 
-See the [actions tab](https://github.com/actions/typescript-action/actions) for runs of this action! :rocket:
+The action can then be run as follows
 
-## Usage:
+```
+node .\lib\LocalTester.js --pat <GitHub-PAT> --owner <Repo owner> --repo <Repo> --runid <Number> --templatefile <File path> --outputfile <File path> --extensionsfile <Optional Full File path>f
+        
+```
+> Note: The `--extensionsfile` parameter requires a full, and not a relative, file path else a load error will occir. The other file parameters can be relative or full path.
 
-After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md) to reference the stable and latest V1 action
+> Note: A sample template and custom extension can be found in the `__tests__` folder.

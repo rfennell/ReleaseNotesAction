@@ -1,19 +1,42 @@
+import * as releaseNotesModule from './generate-releasenotes'
 import * as core from '@actions/core'
-import {wait} from './wait'
+import * as github from '@actions/github'
 
-async function run(): Promise<void> {
-  try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
+export async function run(): Promise<number> {
+  var promise = new Promise<number>(async (resolve, reject) => {
+    // Get authenticated GitHub client (Ocktokit): https://github.com/actions/toolkit/tree/master/packages/github#usage
+    // Pass in the GITHUB_TOKEN in the same style as used by https://github.com/actions/create-release
+    const GITHUB_TOKEN = process.env.GITHUB_TOKEN || ''
+    const octokit = github.getOctokit(GITHUB_TOKEN)
+    // get the context
+    const context = (github as any).context
+    // the run details
+    const repository = context.payload.repository
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    const GITHUB_RUN_ID: number = parseInt(process.env.GITHUB_RUN_ID || '-1')
 
-    core.setOutput('time', new Date().toTimeString())
-  } catch (error) {
-    core.setFailed(error.message)
-  }
+    const templateFile = core.getInput('templateFile')
+    const outputFile = core.getInput('outputFile')
+    const extensionsFile = core.getInput('extensionsFile')
+
+    // overrides to allow local testing
+    const repo = repository.name
+    const owner = repository.owner.login
+
+    await releaseNotesModule.generate(
+      octokit,
+      owner,
+      repo,
+      GITHUB_RUN_ID,
+      templateFile,
+      outputFile,
+      extensionsFile
+    )
+    resolve(0)
+  })
+  return promise
 }
 
-run()
+if (require.main === module) {
+  run()
+}
