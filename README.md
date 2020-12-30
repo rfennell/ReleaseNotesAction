@@ -1,14 +1,6 @@
 # ReleaseNotesAction
 
-This Action uses the GitHub API and a [Handlebars](https://handlebarsjs.com/) based template to generate a release notes file. This file can be attached to a release, or uploaded to an external store such as a WIKI
-
-The task needs the `GITHUB_TOKEN` environment variable set with a valid GitHub token, either the one auto-generated for each workflow run, or a [personal one](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) created with sufficient permissions to access the API. 
-
-It also takes the following parameters
-
-* templateFile: The path to the Handlebar template file.
-* outputfile: The path for the file that will be created
-* extensionsFile: The path to the an optional module of custom Handlebars functions
+This Action uses the GitHub API and a [Handlebars](https://handlebarsjs.com/) based template to generate a release notes file. This file can be used in a variety of ways, such as being attached to a release, or uploaded to an external store such as a WIKI
 
 ## Usage
 
@@ -22,6 +14,16 @@ It also takes the following parameters
     extensionsFile: '${{ github.workspace }}//customextensions.js'
 
 ``` 
+## Parameters
+
+The task needs the `GITHUB_TOKEN` environment variable set with a valid GitHub token, either the one auto-generated for each workflow run, or a [personal one](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) created with sufficient permissions to access the API. 
+
+As well as the `GITHUB_TOKEN` the action also takes the following parameters
+
+* templateFile: The path to the Handlebar template file. (Required)
+* outputFile: The path for the file that will be created. (Required)
+* extensionsFile: The path to the an optional module of custom Handlebars functions. (Optional)
+
 ## Template File
 The template allows you to create your own document layout using [Handlebars](https://handlebarsjs.com/) syntax. A template written in this format is as follows
 
@@ -53,7 +55,7 @@ The template allows you to create your own document layout using [Handlebars](ht
 
 ```
 
-What is done behind the scenes is that each `{{properties}}` block in the template is expanded by Handlebars. The property objects available to get data from at runtime are:
+What is done behind the scenes is that each `{{properties}}` block in the template is expanded by the Handlebars engine. The property object structure available to get data from at runtime are:
 
 * **runDetails** – the details of the current workflow run
   - **pull_requests**  - the array of pull requests associated with the run
@@ -61,11 +63,11 @@ What is done behind the scenes is that each `{{properties}}` block in the templa
     - **comments**  - the array of comment associated with the PR
     - **linkedIssues**  - the array of linked issues with the PR
 
-> **Note:** To dump all possible values there are two options:
-> - Via the template, using the custom Handlebars extension `{{json propertyToDump}}`. This will include a dump of the object values in the generated release notes file.
-> - If you [enable the Actions debug log](https://docs.github.com/en/free-pro-team@latest/actions/managing-workflow-runs/enabling-debug-logging) the API returned data and the generated release notes will be dumped into the action log (note this can make for a very large an unresponsive log file)
+> **Note:** To dump all possible properties of an object there are two options:
+> - Via the template, using the custom Handlebars extension `{{json propertyToDump}}`. This will include a dump of the object properties in the generated release notes file.
+> - If you [enable the Actions debug log](https://docs.github.com/en/free-pro-team@latest/actions/managing-workflow-runs/enabling-debug-logging) the API returned data and the generated release notes text will be dumped into the action log (note this can make for a very large an unresponsive log file)
 
-> **Note:** If a field contains escaped HTML encode data this can be returned its original format with triple brackets format `{{{sample.field}}}` 
+> **Note:** If a field contains escaped HTML encoded data this can be returned its original format with the Handlebars triple brackets format `{{{sample.field}}}` 
 
 ### Handlebar Extensions
  The [Handlebars Helpers](https://github.com/helpers/handlebars-helpers) extension library is also pre-load, this provides over 120 useful extensions to aid in data manipulation when templating. They are used the form
@@ -85,7 +87,7 @@ In addition to the [Handlebars Helpers](https://github.com/helpers/handlebars-he
 {{json runDetails}}
 ```
 
-Finally there is also support for your own custom extension libraries. These are provided via an optional JavaScript file which is loaded into the Handlebars templating engine. The file can contain one or more functions in the following format
+Finally there is also support for your own custom extension libraries. These are provided via an optional JavaScript file which is loaded into the Handlebars templating engine. The file can contain one or more functions, within the `module.exports` block, in the following format
 ```
 module.exports = {
   foo() {
@@ -101,11 +103,21 @@ We can call our custom extension {{foo}}
 ```
 
 ### Local Test Runner
-Within the repo for this action a local runner is provided that can provide an ease means to develop templates and custom extensions. It allows all the parameters usually passed in by a GitHub workflow to be provided via the command line.
+Within the [repo for this action](https://github.com/rfennell/ReleaseNotesAction) a local runner is provided that can provide an easier means to develop templates and custom extensions. It allows all the parameters usually passed in by a GitHub workflow to be provided via the command line.
 
-The usage is as follows
+To build the action locally, from the root of the repo
 
 ```
-node LocalTester.js --pat <GitHub-PAT> --owner <Repo owner> --repo <Repo> --runid <Number> --templatefile <File path> --outputfile <File path> --extensionsFile <Optional Full File path>'
+npm install
+npm run build
+```
+
+The action can then be run as follows
+
+```
+node .\lib\LocalTester.js --pat <GitHub-PAT> --owner <Repo owner> --repo <Repo> --runid <Number> --templatefile <File path> --outputfile <File path> --extensionsfile <Optional Full File path>f
         
 ```
+> Note: The `--extensionsfile` parameter requires a full, and not a relative, file path else a load error will occir. The other file parameters can be relative or full path.
+
+> Note: A sample template and custom extension can be found in the `__tests__` folder.
