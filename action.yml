@@ -1,4 +1,4 @@
-name: 'Generate Release Notes using Handlebars Templaten'
+name: 'Generate Release Notes using Handlebars Template'
 description: 'Generate Release Notes using the Github API and a Handlebars template'
 author: 'Richard Fennell'
 inputs:
