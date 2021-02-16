@@ -102,7 +102,7 @@ and can be consumed in a template as shown below
 We can call our custom extension {{foo}}
 ```
 
-### Local Test Runner
+## Local Test Runner
 Within the [repo for this action](https://github.com/rfennell/ReleaseNotesAction) a local runner is provided that can provide an easier means to develop templates and custom extensions. It allows all the parameters usually passed in by a GitHub workflow to be provided via the command line.
 
 To build the action locally, from the root of the repo
@@ -115,9 +115,32 @@ npm run build
 The action can then be run as follows
 
 ```
-node .\lib\LocalTester.js --pat <GitHub-PAT> --owner <Repo owner> --repo <Repo> --runid <Number> --templatefile <File path> --outputfile <File path> --extensionsfile <Optional Full File path>f
+node .\lib\LocalRun.js --pat <GitHub-PAT> --owner <Repo owner> --repo <Repo> --runid <Number> --templatefile <File path> --outputfile <File path> --extensionsfile <Optional Full File path>f
         
 ```
-> Note: The `--extensionsfile` parameter requires a full, and not a relative, file path else a load error will occir. The other file parameters can be relative or full path.
+> Note: The `--extensionsfile` parameter requires a full, and not a relative, file path else a load error will occur. The other file parameters can be relative or full path.
 
 > Note: A sample template and custom extension can be found in the `__tests__` folder.
+
+## Notes on Building the Extension
+The extension repo is based on basic pattern that is meant to package all the npm dependencies using `ncc`. 
+
+Unfortunately there is an [issue](https://github.com/helpers/handlebars-helpers/issues/375) with `Handlebars` that stops it being used with `ncc`. Until this is addressed the `node-modules` folder needs to be committed to the repo containing the production dependencies for use at runtime
+
+Hence, to build the product and remove the development dependencies run
+
+```
+npm install
+npm run build
+npm run format 
+npm run lint
+npm test
+npm run package
+```
+
+or
+
+```
+npm install
+npm run all
+```
