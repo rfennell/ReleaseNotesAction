@@ -96,5 +96,7 @@ Thumbs.db
 
 # Ignore built ts files
 __tests__/runner/*
-# we are not using webpack so need this
-# lib/**/*
+lib/**/*
+
+# we don't we the test output
+__tests__/out.md
