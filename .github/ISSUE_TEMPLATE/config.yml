@@ -2,6 +2,6 @@ contact_links:
 
   - name: Question
 
-    url: https://github.com/rfennell/AzurePipelines/discussions/new
+    url: https://github.com/rfennell/ReleaseNotesAction/discussions/new
 
     about: Ask a question about usage of an extension in this project
