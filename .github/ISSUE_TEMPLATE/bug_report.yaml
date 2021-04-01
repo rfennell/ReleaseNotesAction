@@ -1,0 +1,53 @@
+name: Bug Report
+description: File a bug report
+labels: [bug]
+issue_body: true
+body:
+- type: input
+  id: version
+  attributes:
+    label: Action Version
+    description: "Which version of the Action are you using"
+    placeholder: "e.g. 1.2.3"
+  validations:
+    required: false
+- type: textarea
+  id: Description
+  attributes:
+    label:  Describe the bug
+    description: "A clear and concise description of the bug"
+    render: bash
+  validations:
+    required: true
+- type: textarea
+  id: RepoSteps
+  attributes:
+    label:  Repo Steps
+    description: "Steps to reproduce the behavior"
+    value: |
+      1. Go to '...'
+      2. Click on '....'
+      3. Scroll down to '....'
+      4. See error
+      ...
+    render: bash
+  validations:
+    required: true
+- type: textarea
+  id: expected
+  attributes:
+    label:  Expected Behavior
+    description: A clear and concise description of what you expected to happen.
+    render: bash
+  validations:
+    required: false
+- type: textarea
+  id: extraInfo
+  attributes:
+    label:  Logging Information
+    description: |
+      - Please provide debug logs of the problem, remember you can get these by setting a secret `ACTIONS_STEP_DEBUG` to any value. If you don't provide detailed logs when you raise the issue it will almost certainly be the first request I make to diagnose the problem
+      - If applicable, add screenshots to help explain your problem.
+    render: bash
+  validations:
+    required: false
