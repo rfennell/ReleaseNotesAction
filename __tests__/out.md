@@ -1,10 +1,10 @@
 # Release Notes 
 ## Run Details
-- Workflow: build-test 
-- Head Branch: initial-poc 
-- Head SHA: 7bd021df2aba1e4c3cae653556d0507319d0cac4 
+- Workflow: [Mark stale issues](https://github.com/rfennell/AzurePipelines/actions/runs/713295228) 
+- Head Branch: main 
+- Head SHA: 72e74d9e5dd4736e6ce5ce3ee32158495c877882 
 
 ## Pull Requests
 
-### A custom extension
+# A custom extension
 Returns foo
