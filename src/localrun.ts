@@ -20,7 +20,7 @@ async function run(): Promise<number> {
         const extensionsFile = argv['extensionsFile']
 
         console.log(`Command Line Arguments:`)
-        console.log(`  --pat: ${pat}`)
+        console.log(`  --pat: ${obfuscatePasswordForLog(pat)}`)
         console.log(`  --owner: ${owner}`)
         console.log(`  --repo: ${repo}`)
         console.log(`  --runid: ${runid}`)
@@ -47,6 +47,14 @@ async function run(): Promise<number> {
     resolve(0)
   })
   return promise
+}
+
+function obfuscatePasswordForLog(value: string, charToShow = 4, charToUse = "*") {
+  var returnValue = "";
+  if (value && value.length > 0) {
+      returnValue = `${new Array(value.length - charToShow + 1).join( charToUse )}${value.substring(value.length - charToShow)}`;
+  }
+  return returnValue;
 }
 
 run()
