@@ -49,12 +49,18 @@ async function run(): Promise<number> {
   return promise
 }
 
-function obfuscatePasswordForLog(value: string, charToShow = 4, charToUse = "*") {
-  var returnValue = "";
+function obfuscatePasswordForLog(
+  value: string,
+  charToShow = 4,
+  charToUse = '*'
+): string {
+  var returnValue = ''
   if (value && value.length > 0) {
-      returnValue = `${new Array(value.length - charToShow + 1).join( charToUse )}${value.substring(value.length - charToShow)}`;
+    returnValue = `${new Array(value.length - charToShow + 1).join(
+      charToUse
+    )}${value.substring(value.length - charToShow)}`
   }
-  return returnValue;
+  return returnValue
 }
 
 run()
