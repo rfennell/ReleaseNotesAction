@@ -49,7 +49,7 @@
       "@typescript-eslint/semi": ["error", "never"],
       "@typescript-eslint/type-annotation-spacing": "error",
       "@typescript-eslint/unbound-method": "error",
-      "import/no-dynamic-require": "off
+      "import/no-dynamic-require": "off"
     },
     "env": {
       "node": true,
