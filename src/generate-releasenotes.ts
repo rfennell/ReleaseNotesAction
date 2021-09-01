@@ -41,7 +41,7 @@ export async function generate(
       core.setFailed(`Cannot find template file ${templateFile}`)
     }
   } catch (error) {
-    core.setFailed(error.message)
+    core.setFailed(error)
   }
 }
 
@@ -126,7 +126,7 @@ async function GetRunDetails(
 
       resolve(runDetails)
     } catch (error) {
-      core.setFailed(error.message)
+      core.setFailed(error)
     }
   })
 }
