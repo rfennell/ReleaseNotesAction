@@ -49,6 +49,8 @@
       "@typescript-eslint/semi": ["error", "never"],
       "@typescript-eslint/type-annotation-spacing": "error",
       "@typescript-eslint/unbound-method": "error",
+      "i18n-text/no-en": "off",
+      "sort-imports": "off",
       "import/no-dynamic-require": "off"
     },
     "env": {
