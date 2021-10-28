@@ -98,7 +98,7 @@ async function GetRunDetails(
 ): Promise<any[]> {
   return new Promise<any[]>(async (resolve, reject) => {
     try {
-      const response = await octokit.actions.getWorkflowRun({
+      const response = await octokit.rest.actions.getWorkflowRun({
         owner: owner,
         repo: repo,
         run_id: run_id
@@ -143,7 +143,7 @@ async function GetPullRequests(
       for (let index = 0; index < prList.length; index++) {
         const pr = prList[index]
         core.info(`Getting the details of associated PR ${pr.number}`)
-        const response = await octokit.pulls.get({
+        const response = await octokit.rest.pulls.get({
           owner: owner,
           repo: repo,
           pull_number: pr.number
@@ -188,7 +188,7 @@ async function GetPullRequestCommits(
   return new Promise<any[]>(async (resolve, reject) => {
     try {
       core.info(`Getting the commits associated with PR ${pr.number}`)
-      const response = await octokit.pulls.listCommits({
+      const response = await octokit.rest.pulls.listCommits({
         owner: owner,
         repo: repo,
         pull_number: pr.number
@@ -210,7 +210,7 @@ async function GetPullRequestComments(
   return new Promise<any[]>(async (resolve, reject) => {
     try {
       core.info(`Getting the comments associated with PR ${pr.number}`)
-      const response = await octokit.issues.listComments({
+      const response = await octokit.rest.issues.listComments({
         owner: owner,
         repo: repo,
         issue_number: pr.number
@@ -275,7 +275,7 @@ async function GetLinkedIssues(
         for (const [issue, count] of Object.entries(issues)) {
           if (count % 2 !== 0) {
             core.debug(`Getting the linked issue ${issue}`)
-            const issueDetails = await octokit.issues.get({
+            const issueDetails = await octokit.rest.issues.get({
               owner: owner,
               repo: repo,
               issue_number: issue
