@@ -38,13 +38,13 @@
     "@typescript-eslint/parser": "^5.3.1",
     "@vercel/ncc": "^0.31.1",
     "eslint": "^8.2.0",
-    "eslint-plugin-github": "^4.3.4",
+    "eslint-plugin-github": "^4.3.5",
     "eslint-plugin-jest": "^25.2.4",
     "jest": "^27.3.1",
-    "jest-circus": "^27.3.1",
+    "jest-circus": "^27.4.6",
     "js-yaml": "^4.1.0",
     "prettier": "2.4.1",
     "ts-jest": "^27.0.7",
-    "typescript": "^4.4.4"
+    "typescript": "^4.5.4"
   }
 }
