@@ -1,6 +1,5 @@
 jest.mock('@actions/core')
 jest.mock('@actions/github')
-jest.mock('fs')
 jest.mock('../src/generate-releasenotes')
 
 const core = require('@actions/core')
