@@ -9,7 +9,8 @@ export async function generate(
   run_id: number,
   templateFile: string,
   outputFile: string,
-  extensionsFile: string
+  extensionsFile: string,
+  writeToJobSummary: boolean
 ): Promise<void> {
   try {
     core.info(
@@ -37,6 +38,14 @@ export async function generate(
       core.debug(`---THE OUTPUT OBJECT END---`)
 
       fs.writeFileSync(outputFile, output)
+
+      if (writeToJobSummary) {
+        core.info(`Adding output to the Job Summary`)
+        await core.summary
+        .addRaw(output)
+        .write()
+      }
+
     } else {
       core.setFailed(`Cannot find template file ${templateFile}`)
     }

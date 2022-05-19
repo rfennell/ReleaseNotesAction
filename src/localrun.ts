@@ -37,7 +37,8 @@ async function run(): Promise<number> {
           runid,
           templatefile,
           outputfile,
-          extensionsFile
+          extensionsFile,
+          false
         )
       }
     } catch (err) {
