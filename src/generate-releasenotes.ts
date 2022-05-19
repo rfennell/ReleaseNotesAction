@@ -42,11 +42,8 @@ export async function generate(
 
       if (writeToJobSummary) {
         core.info(`Adding output to the Job Summary`)
-        await core.summary
-        .addRaw(output)
-        .write()
+        await core.summary.addRaw(output).write()
       }
-
     } else {
       core.setFailed(`Cannot find template file ${templateFile}`)
     }
