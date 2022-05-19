@@ -13,6 +13,10 @@ inputs:
     required: false
     description: 'The path to the an optional module of custom Handlebars functions'
     default: ''
+  writeToJobSummary:
+    required: false
+    description: 'If true the output will be written to the Job Summary'
+    default: 'false'
 runs:
   using: 'node12'
   main: 'lib/main.js'
