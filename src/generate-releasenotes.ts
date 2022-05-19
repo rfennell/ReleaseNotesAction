@@ -18,6 +18,7 @@ export async function generate(
     )
     core.info(`Template File: ${templateFile}`)
     core.info(`Output File: ${outputFile}`)
+    core.info(`WriteToJobSummary: ${writeToJobSummary}`)
     core.info(`Owner: ${owner}`)
     core.info(`Repo: ${repo}`)
 
