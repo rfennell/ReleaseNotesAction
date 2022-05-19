@@ -18,6 +18,7 @@ export async function run(): Promise<number> {
     const templateFile = core.getInput('templateFile')
     const outputFile = core.getInput('outputFile')
     const extensionsFile = core.getInput('extensionsFile')
+    const writeToJobSummary = core.getBooleanInput('writeToJobSummary')
 
     // overrides to allow local testing
     const repo = repository.name
@@ -30,7 +31,8 @@ export async function run(): Promise<number> {
       GITHUB_RUN_ID,
       templateFile,
       outputFile,
-      extensionsFile
+      extensionsFile,
+      writeToJobSummary
     )
     resolve(0)
   })

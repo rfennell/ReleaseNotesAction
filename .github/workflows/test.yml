@@ -28,3 +28,4 @@ jobs:
           templateFile: '${{ github.workspace }}/__tests__/template.md'
           outputfile: '${{ github.workspace }}/__tests__/releasenotes.md'
           extensionsfile: '${{ github.workspace }}/__tests__/customextensions.js'
+          writeToJobSummary: true
