@@ -24,7 +24,7 @@ As well as the `GITHUB_TOKEN` the action also takes the following parameters
 * templateFile: The path to the Handlebar template file. (Required)
 * outputFile: The path for the file that will be created. (Required)
 * extensionsFile: The path to the an optional module of custom Handlebars functions. (Optional)
-* writeToJobSummary: If true the output will be written to the [Job Summary](https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/)
+* writeToJobSummary: If true the output will be written to the [Action Job Summary](https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/) as well as generating a file.
 
 ## Template File
 The template allows you to create your own document layout using [Handlebars](https://handlebarsjs.com/) syntax. A template written in this format is as follows
